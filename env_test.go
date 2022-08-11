@@ -36,7 +36,7 @@ func TestSet(t *testing.T) {
 		//Set(s)  TODO: what happens here?
 		Set(&s)
 
-		if s.Foo != "bar" {
+		if s.Foo != "bar b" {
 			t.Errorf("unexpected env var set. expected=\"bar\". got=\"%s\"", s.Foo)
 		}
 	})
