@@ -21,7 +21,7 @@ func TestSet(t *testing.T) {
 	//	})
 	//}
 
-	t.Run("first test", func(t *testing.T) {
+	t.Run("set string field from envvar", func(t *testing.T) {
 		if err := os.Setenv("FOO", "bar"); err != nil {
 			t.Error(err)
 			return
@@ -40,5 +40,45 @@ func TestSet(t *testing.T) {
 			t.Errorf("unexpected env var set. expected=\"bar\". got=\"%s\"", s.Foo)
 		}
 	})
+
+	t.Run("set int field from envvar", func(t *testing.T) {
+		if err := os.Setenv("SOME_NUMBER", "123"); err != nil {
+			t.Error(err)
+			return
+		}
+
+		type S struct {
+			Number int `env:"SOME_NUMBER"`
+		}
+
+		var s S
+
+		//Set(s)  TODO: what happens here?
+		Set(&s)
+
+		if s.Number != 123 {
+			t.Errorf("unexpected env var set. expected=\"123\". got=\"%d\"", s.Number)
+		}
+	})
+
+	//t.Run("set int field from invalid integer envvar", func(t *testing.T) {
+	//	if err := os.Setenv("SOME_NUMBER", "abc"); err != nil {
+	//		t.Error(err)
+	//		return
+	//	}
+	//
+	//	type S struct {
+	//		Number int `env:"SOME_NUMBER"`
+	//	}
+	//
+	//	var s S
+	//
+	//	//Set(s)  TODO: what happens here?
+	//	Set(&s)
+	//
+	//	if s.Number != 123 {
+	//		t.Errorf("unexpected env var set. expected=\"123\". got=\"%d\"", s.Number)
+	//	}
+	//})
 
 }

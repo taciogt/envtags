@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strconv"
 )
 
 const tagName = "env"
 
-func Set(s interface{}) bool {
+func Set(s interface{}) error {
 	value := reflect.ValueOf(s)
 	//if value.Type().Kind() == reflect.Ptr {
 	//
@@ -28,7 +29,15 @@ func Set(s interface{}) bool {
 		envVarName := fType.Tag.Get(tagName)
 		envVarValue, _ := os.LookupEnv(envVarName)
 
-		f.SetString(envVarValue)
+		if fType.Type.Kind() == reflect.String {
+			f.SetString(envVarValue)
+		} else if fType.Type.Kind() == reflect.Int {
+			invValue, err := strconv.Atoi(envVarValue)
+			if err != nil {
+				return err
+			}
+			f.SetInt(int64(invValue))
+		}
 	}
-	return true
+	return nil
 }
