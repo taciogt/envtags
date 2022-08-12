@@ -1,12 +1,18 @@
 package envtags
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"reflect"
 	"strconv"
 )
 
 const tagName = "env"
+
+var (
+	ErrInvalidTypeConversion = errors.New("invalid type conversion")
+)
 
 func Set(s interface{}) error {
 	value := reflect.ValueOf(s)
@@ -26,7 +32,7 @@ func Set(s interface{}) error {
 			} else if fType.Type.Kind() == reflect.Int {
 				invValue, err := strconv.Atoi(envVarValue)
 				if err != nil {
-					return err
+					return GetError(ErrInvalidTypeConversion, err)
 				}
 				f.SetInt(int64(invValue))
 			}
@@ -34,4 +40,8 @@ func Set(s interface{}) error {
 
 	}
 	return nil
+}
+
+func GetError(customErr, baseErr error) error {
+	return fmt.Errorf("%w: %s", customErr, baseErr)
 }

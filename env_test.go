@@ -1,6 +1,7 @@
 package envtags
 
 import (
+	"errors"
 	"os"
 	"testing"
 )
@@ -30,6 +31,13 @@ func TestSetFieldTypes(t *testing.T) {
 			"NUMBER": "123",
 		},
 	},
+		{
+			name:    "set integer field with invalid env var",
+			wantErr: ErrInvalidTypeConversion,
+			envVars: map[string]string{
+				"NUMBER": "abc",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -43,7 +51,7 @@ func TestSetFieldTypes(t *testing.T) {
 
 			var cfg Config
 
-			if err := Set(&cfg); err != tt.wantErr {
+			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
 				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
 			}
 			if cfg != tt.expected {
