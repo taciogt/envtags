@@ -30,14 +30,13 @@ func TestSetFieldTypes(t *testing.T) {
 		envVars: map[string]string{
 			"NUMBER": "123",
 		},
-	},
-		{
-			name:    "set integer field with invalid env var",
-			wantErr: ErrInvalidTypeConversion,
-			envVars: map[string]string{
-				"NUMBER": "abc",
-			},
+	}, {
+		name:    "set integer field with invalid env var",
+		wantErr: ErrInvalidTypeConversion,
+		envVars: map[string]string{
+			"NUMBER": "abc",
 		},
+	},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
