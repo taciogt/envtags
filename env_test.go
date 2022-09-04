@@ -1,44 +1,61 @@
 package envtags
 
 import (
+	"errors"
 	"os"
 	"testing"
 )
 
-func TestSet(t *testing.T) {
-	//tests := []struct {
-	//	name string
-	//	input interface{}
-	//	want bool
-	//}{
-	//	// TODO: Add test cases.
-	//}
-	//for _, tt := range tests {
-	//	t.Run(tt.name, func(t *testing.T) {
-	//		if got := Set(); got != tt.want {
-	//			t.Errorf("Set() = %v, want %v", got, tt.want)
-	//		}
-	//	})
-	//}
+func TestSetFieldTypes(t *testing.T) {
+	type Config struct {
+		Word string `env:"FOO"`
 
-	t.Run("first test", func(t *testing.T) {
-		if err := os.Setenv("FOO", "bar"); err != nil {
-			t.Error(err)
-			return
-		}
+		Number int `env:"NUMBER"`
+	}
 
-		type S struct {
-			Foo string `env:"FOO"`
-		}
+	tests := []struct {
+		name     string
+		expected Config
+		envVars  map[string]string
+		wantErr  error
+	}{{
+		name:     "set string field",
+		expected: Config{Word: "bar"},
+		envVars: map[string]string{
+			"FOO": "bar",
+		},
+	}, {
+		name:     "set integer field",
+		expected: Config{Number: 123},
+		envVars: map[string]string{
+			"NUMBER": "123",
+		},
+	}, {
+		name:    "set integer field with invalid env var",
+		wantErr: ErrInvalidTypeConversion,
+		envVars: map[string]string{
+			"NUMBER": "abc",
+		},
+	},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.envVars {
+				if err := os.Setenv(k, v); err != nil {
+					t.Error(err)
+					return
+				}
+			}
+			defer os.Clearenv()
 
-		var s S
+			var cfg Config
 
-		//Set(s)  TODO: what happens here?
-		Set(&s)
-
-		if s.Foo != "bar" {
-			t.Errorf("unexpected env var set. expected=\"bar\". got=\"%s\"", s.Foo)
-		}
-	})
-
+			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
+				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
+			}
+			if cfg != tt.expected {
+				t.Errorf("Set(&s), want %+v, got %+v", tt.expected, cfg)
+			}
+		})
+	}
 }
