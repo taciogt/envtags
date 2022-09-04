@@ -1,6 +1,9 @@
 GOTEST ?= go test
 GOTOOL ?= go tool
 
+setup:
+	go install github.com/rakyll/gotest
+
 .PHONY: test
 test:
 	go test -v ./...
