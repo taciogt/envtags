@@ -25,3 +25,21 @@ jobs:
         run: go version
       - name: Run Tests
         run: make test
+
+  coverage-report:
+    name: Generates and publishes coverage report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Setup Go Environment
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+      - name: Generate coverage report
+        run: make coverage
+      - name: Publishes report to Codacy
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage.out
