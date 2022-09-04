@@ -11,4 +11,3 @@ $(COVERAGE_OUT): *.go
 
 coverage-report: $(COVERAGE_OUT)
 	$(GOTOOL) cover -html=coverage.out
-	#$(GOTOOL) cover -html=$(COVERAGE_OUT)
