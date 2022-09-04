@@ -5,6 +5,10 @@ GOTOOL ?= go tool
 test:
 	go test -v ./...
 
-coverage:
+COVERAGE_OUT = coverage.out
+$(COVERAGE_OUT): *.go
 	$(GOTEST) -cover -coverprofile=coverage.out -v ./...
+
+coverage-report: $(COVERAGE_OUT)
 	$(GOTOOL) cover -html=coverage.out
+	#$(GOTOOL) cover -html=$(COVERAGE_OUT)
