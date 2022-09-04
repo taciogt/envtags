@@ -37,7 +37,7 @@ jobs:
         with:
           go-version: '1.19'
       - name: Generate coverage report
-        run: make coverage
+        run: make coverage.out
       - name: Publishes report to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
