@@ -10,7 +10,8 @@ func TestSetFieldTypes(t *testing.T) {
 	type Config struct {
 		Word string `env:"FOO"`
 
-		Number int `env:"NUMBER"`
+		Number  int     `env:"NUMBER"`
+		Float32 float32 `env:"FLOAT_NUMBER"`
 	}
 
 	tests := []struct {
@@ -35,6 +36,12 @@ func TestSetFieldTypes(t *testing.T) {
 		wantErr: ErrInvalidTypeConversion,
 		envVars: map[string]string{
 			"NUMBER": "abc",
+		},
+	}, {
+		name:     "set float field",
+		expected: Config{Float32: 1.23},
+		envVars: map[string]string{
+			"FLOAT_NUMBER": "1.23",
 		},
 	},
 	}

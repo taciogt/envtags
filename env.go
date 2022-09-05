@@ -28,14 +28,21 @@ func Set(s interface{}) error {
 		envVarValue, ok := os.LookupEnv(envVarName)
 
 		if ok {
-			if fType.Type.Kind() == reflect.String {
+			switch fType.Type.Kind() {
+			case reflect.String:
 				f.SetString(envVarValue)
-			} else if fType.Type.Kind() == reflect.Int {
+			case reflect.Int:
 				invValue, err := strconv.Atoi(envVarValue)
 				if err != nil {
 					return GetError(ErrInvalidTypeConversion, err)
 				}
 				f.SetInt(int64(invValue))
+			case reflect.Float32:
+				value, err := strconv.ParseFloat(envVarValue, 32)
+				if err != nil {
+					return GetError(ErrInvalidTypeConversion, err)
+				}
+				f.SetFloat(value)
 			}
 		}
 
