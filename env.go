@@ -11,6 +11,7 @@ import (
 const tagName = "env"
 
 var (
+	// ErrInvalidTypeConversion is an error returned when the environment variable is not properly parsed to the expected field type
 	ErrInvalidTypeConversion = errors.New("invalid type conversion")
 )
 
