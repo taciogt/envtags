@@ -15,6 +15,29 @@ var (
 	ErrInvalidTypeConversion = errors.New("invalid type conversion")
 )
 
+var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value) error{
+	reflect.String: func(envVarValue string, v reflect.Value) error {
+		v.SetString(envVarValue)
+		return nil
+	},
+	reflect.Int: func(envVarValue string, v reflect.Value) error {
+		invValue, err := strconv.Atoi(envVarValue)
+		if err != nil {
+			return GetError(ErrInvalidTypeConversion, err)
+		}
+		v.SetInt(int64(invValue))
+		return nil
+	},
+	reflect.Float32: func(envVarValue string, v reflect.Value) error {
+		floatValue, err := strconv.ParseFloat(envVarValue, 32)
+		if err != nil {
+			return GetError(ErrInvalidTypeConversion, err)
+		}
+		v.SetFloat(floatValue)
+		return nil
+	},
+}
+
 func Set(s interface{}) error {
 	value := reflect.ValueOf(s)
 	elem := value.Elem()
@@ -23,26 +46,15 @@ func Set(s interface{}) error {
 	for i := 0; i < elem.NumField(); i++ {
 		f := elem.Field(i)
 		fType := typeSpec.Field(i)
-
 		envVarName := fType.Tag.Get(tagName)
-		envVarValue, ok := os.LookupEnv(envVarName)
 
-		if ok {
-			switch fType.Type.Kind() {
-			case reflect.String:
-				f.SetString(envVarValue)
-			case reflect.Int:
-				invValue, err := strconv.Atoi(envVarValue)
-				if err != nil {
-					return GetError(ErrInvalidTypeConversion, err)
-				}
-				f.SetInt(int64(invValue))
-			case reflect.Float32:
-				value, err := strconv.ParseFloat(envVarValue, 32)
-				if err != nil {
-					return GetError(ErrInvalidTypeConversion, err)
-				}
-				f.SetFloat(value)
+		if envVarValue, ok := os.LookupEnv(envVarName); ok {
+			parser, parserExists := parserByKindMap[fType.Type.Kind()]
+			if !parserExists {
+				return errors.New("parser not available")
+			}
+			if err := parser(envVarValue, f); err != nil {
+				return err
 			}
 		}
 
