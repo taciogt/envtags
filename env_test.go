@@ -65,6 +65,7 @@ func TestSetIntTypes(t *testing.T) {
 		Int   int   `env:"INT"`
 		Int8  int8  `env:"INT_8"`
 		Int16 int16 `env:"INT_16"`
+		Int32 int32 `env:"INT_32"`
 		Int64 int64 `env:"INT_64"`
 	}
 
@@ -126,6 +127,12 @@ func TestSetIntTypes(t *testing.T) {
 		expected: Config{Int16: -32768},
 		envVars: map[string]string{
 			"INT_16": "-32768",
+		},
+	}, {
+		name:     "set int32 field",
+		expected: Config{Int32: 2147483647},
+		envVars: map[string]string{
+			"INT_32": "2147483647",
 		},
 	}, {
 		name:     "set int64 field",
