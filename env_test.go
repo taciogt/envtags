@@ -8,12 +8,7 @@ import (
 
 func TestSetFieldTypes(t *testing.T) {
 	type Config struct {
-		Word string `env:"FOO"`
-
-		Int   int   `env:"INT"`
-		Int8  int8  `env:"INT_8"`
-		Int16 int16 `env:"INT_16"`
-
+		Word    string  `env:"FOO"`
 		Float32 float32 `env:"FLOAT_NUMBER"`
 	}
 
@@ -29,6 +24,49 @@ func TestSetFieldTypes(t *testing.T) {
 			"FOO": "bar",
 		},
 	}, {
+		name:     "set float field",
+		expected: Config{Float32: 1.23},
+		envVars: map[string]string{
+			"FLOAT_NUMBER": "1.23",
+		},
+	},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.envVars {
+				if err := os.Setenv(k, v); err != nil {
+					t.Error(err)
+					return
+				}
+			}
+			defer os.Clearenv()
+
+			var cfg Config
+
+			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
+				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
+				return
+			}
+			if cfg != tt.expected {
+				t.Errorf("Set(&s), want %+v, got %+v", tt.expected, cfg)
+			}
+		})
+	}
+}
+
+func TestSetIntTypes(t *testing.T) {
+	type Config struct {
+		Int   int   `env:"INT"`
+		Int8  int8  `env:"INT_8"`
+		Int16 int16 `env:"INT_16"`
+	}
+
+	tests := []struct {
+		name     string
+		expected Config
+		envVars  map[string]string
+		wantErr  error
+	}{{
 		name:     "set integer field",
 		expected: Config{Int: 123},
 		envVars: map[string]string{
@@ -75,12 +113,6 @@ func TestSetFieldTypes(t *testing.T) {
 		expected: Config{Int16: -32768},
 		envVars: map[string]string{
 			"INT_16": "-32768",
-		},
-	}, {
-		name:     "set float field",
-		expected: Config{Float32: 1.23},
-		envVars: map[string]string{
-			"FLOAT_NUMBER": "1.23",
 		},
 	},
 	}
