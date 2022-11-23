@@ -8,8 +8,9 @@ import (
 
 func TestSetFieldTypes(t *testing.T) {
 	type Config struct {
-		Word    string  `env:"FOO"`
-		Float32 float32 `env:"FLOAT_NUMBER"`
+		Word      string    `env:"FOO"`
+		Float32   float32   `env:"FLOAT_NUMBER"`
+		Complex64 complex64 `env:"COMPLEX_64"`
 	}
 
 	tests := []struct {
@@ -29,8 +30,13 @@ func TestSetFieldTypes(t *testing.T) {
 		envVars: map[string]string{
 			"FLOAT_NUMBER": "1.23",
 		},
-	},
-	}
+	}, {
+		name: "set float field",
+		envVars: map[string]string{
+			"COMPLEX_64": "-",
+		},
+		wantErr: ErrParserNotAvailable,
+	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for k, v := range tt.envVars {
