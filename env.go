@@ -18,16 +18,16 @@ var (
 	ErrParserNotAvailable = errors.New("parser not available")
 )
 
-func getIntParsers(minSize int, maxSize int) func(envVarValue string, v reflect.Value) error {
+func getIntParser(minSize int, maxSize int) func(envVarValue string, v reflect.Value) error {
 	return func(envVarValue string, v reflect.Value) error {
 		intValue, err := strconv.Atoi(envVarValue)
 		if err != nil {
-			return GetError(ErrInvalidTypeConversion, err)
+			return getError(ErrInvalidTypeConversion, err)
 		}
 		if intValue > maxSize {
-			return GetError(ErrInvalidTypeConversion, errors.New("value greater than max available"))
+			return getError(ErrInvalidTypeConversion, errors.New("value greater than max available"))
 		} else if intValue < minSize {
-			return GetError(ErrInvalidTypeConversion, errors.New("value less than min available"))
+			return getError(ErrInvalidTypeConversion, errors.New("value less than min available"))
 		}
 		v.SetInt(int64(intValue))
 		return nil
@@ -39,13 +39,14 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 		v.SetString(envVarValue)
 		return nil
 	},
-	reflect.Int:   getIntParsers(math.MinInt, math.MaxInt),
-	reflect.Int8:  getIntParsers(math.MinInt8, math.MaxInt8),
-	reflect.Int16: getIntParsers(math.MinInt16, math.MaxInt16),
+	reflect.Int:   getIntParser(math.MinInt, math.MaxInt),
+	reflect.Int8:  getIntParser(math.MinInt8, math.MaxInt8),
+	reflect.Int16: getIntParser(math.MinInt16, math.MaxInt16),
+	reflect.Int64: getIntParser(math.MinInt64, math.MaxInt64),
 	reflect.Float32: func(envVarValue string, v reflect.Value) error {
 		floatValue, err := strconv.ParseFloat(envVarValue, 32)
 		if err != nil {
-			return GetError(ErrInvalidTypeConversion, err)
+			return getError(ErrInvalidTypeConversion, err)
 		}
 		v.SetFloat(floatValue)
 		return nil
@@ -65,7 +66,7 @@ func Set(s interface{}) error {
 		if envVarValue, ok := os.LookupEnv(envVarName); ok {
 			parser, parserExists := parserByKindMap[fType.Type.Kind()]
 			if !parserExists {
-				return getParserNotAvailableError(fType)
+				return getError(ErrParserNotAvailable, fmt.Errorf("parser for %s not found", fType.Type.Kind()))
 			}
 			if err := parser(envVarValue, f); err != nil {
 				return err
@@ -76,10 +77,6 @@ func Set(s interface{}) error {
 	return nil
 }
 
-func getParserNotAvailableError(fType reflect.StructField) error {
-	return fmt.Errorf("%w. kind=%s", ErrParserNotAvailable, fType.Type.Kind())
-}
-
-func GetError(customErr, baseErr error) error {
+func getError(customErr, baseErr error) error {
 	return fmt.Errorf("%w: %s", customErr, baseErr)
 }
