@@ -10,8 +10,9 @@ func TestSetFieldTypes(t *testing.T) {
 	type Config struct {
 		Word string `env:"FOO"`
 
-		Int  int  `env:"INT"`
-		Int8 int8 `env:"INT_8"`
+		Int   int   `env:"INT"`
+		Int8  int8  `env:"INT_8"`
+		Int16 int16 `env:"INT_16"`
 
 		Float32 float32 `env:"FLOAT_NUMBER"`
 	}
@@ -63,6 +64,18 @@ func TestSetFieldTypes(t *testing.T) {
 			"INT_8": "130", // max size is 127
 		},
 		wantErr: ErrInvalidTypeConversion,
+	}, {
+		name:     "set int16 field",
+		expected: Config{Int16: 32767},
+		envVars: map[string]string{
+			"INT_16": "32767",
+		},
+	}, {
+		name:     "set int16 field with negative value",
+		expected: Config{Int16: -32768},
+		envVars: map[string]string{
+			"INT_16": "-32768",
+		},
 	}, {
 		name:     "set float field",
 		expected: Config{Float32: 1.23},
