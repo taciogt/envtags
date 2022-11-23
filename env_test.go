@@ -103,6 +103,12 @@ func TestSetIntTypes(t *testing.T) {
 		},
 		wantErr: ErrInvalidTypeConversion,
 	}, {
+		name: "set int8 field with value less than min size",
+		envVars: map[string]string{
+			"INT_8": "-129", // max size is 127
+		},
+		wantErr: ErrInvalidTypeConversion,
+	}, {
 		name:     "set int16 field",
 		expected: Config{Int16: 32767},
 		envVars: map[string]string{
@@ -129,7 +135,7 @@ func TestSetIntTypes(t *testing.T) {
 			var cfg Config
 
 			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
-				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
+				t.Errorf("err different than expected, want=\"%+v\", got=\"%+v\"", tt.wantErr, err)
 				return
 			}
 			if cfg != tt.expected {
