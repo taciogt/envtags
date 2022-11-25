@@ -19,7 +19,10 @@ func TestSetFieldTypes(t *testing.T) {
 		Int64 int64 `env:"INT_64"`
 
 		UInt   uint   `env:"UINT"`
+		UInt8  uint32 `env:"UINT_8"`
+		UInt16 uint32 `env:"UINT_16"`
 		UInt32 uint32 `env:"UINT_32"`
+		UInt64 uint32 `env:"UINT_64"`
 	}
 
 	tests := []struct {
@@ -134,6 +137,12 @@ func TestSetFieldTypes(t *testing.T) {
 			},
 			wantErr: ErrInvalidTypeConversion,
 		}, {
+			name:     "set unsigned uint64 field",
+			expected: config{UInt64: 123},
+			envVars: map[string]string{
+				"UINT_64": "123",
+			},
+		}, {
 			name:     "set unsigned uint32 field",
 			expected: config{UInt32: 123},
 			envVars: map[string]string{
@@ -145,6 +154,18 @@ func TestSetFieldTypes(t *testing.T) {
 				"UINT_32": "4294967296",
 			},
 			wantErr: ErrInvalidTypeConversion,
+		}, {
+			name:     "set unsigned uint16 field",
+			expected: config{UInt16: 123},
+			envVars: map[string]string{
+				"UINT_16": "123",
+			},
+		}, {
+			name:     "set unsigned uint8 field",
+			expected: config{UInt8: 123},
+			envVars: map[string]string{
+				"UINT_8": "123",
+			},
 		},
 	}
 
