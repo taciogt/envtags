@@ -8,10 +8,9 @@ import (
 
 func TestSetFieldTypes(t *testing.T) {
 	type Config struct {
-		Word string `env:"FOO"`
-
-		Number  int     `env:"NUMBER"`
-		Float32 float32 `env:"FLOAT_NUMBER"`
+		Word      string    `env:"FOO"`
+		Float32   float32   `env:"FLOAT_NUMBER"`
+		Complex64 complex64 `env:"COMPLEX_64"`
 	}
 
 	tests := []struct {
@@ -26,22 +25,120 @@ func TestSetFieldTypes(t *testing.T) {
 			"FOO": "bar",
 		},
 	}, {
-		name:     "set integer field",
-		expected: Config{Number: 123},
+		name:     "set float field",
+		expected: Config{Float32: 1.23},
 		envVars: map[string]string{
-			"NUMBER": "123",
+			"FLOAT_NUMBER": "1.23",
+		},
+	}, {
+		name: "set float field",
+		envVars: map[string]string{
+			"COMPLEX_64": "-",
+		},
+		wantErr: ErrParserNotAvailable,
+	}}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.envVars {
+				if err := os.Setenv(k, v); err != nil {
+					t.Error(err)
+					return
+				}
+			}
+			defer os.Clearenv()
+
+			var cfg Config
+
+			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
+				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
+				return
+			}
+			if cfg != tt.expected {
+				t.Errorf("Set(&s), want %+v, got %+v", tt.expected, cfg)
+			}
+		})
+	}
+}
+
+func TestSetIntTypes(t *testing.T) {
+	type Config struct {
+		Int   int   `env:"INT"`
+		Int8  int8  `env:"INT_8"`
+		Int16 int16 `env:"INT_16"`
+		Int32 int32 `env:"INT_32"`
+		Int64 int64 `env:"INT_64"`
+	}
+
+	tests := []struct {
+		name     string
+		expected Config
+		envVars  map[string]string
+		wantErr  error
+	}{{
+		name:     "set integer field",
+		expected: Config{Int: 123},
+		envVars: map[string]string{
+			"INT": "123",
+		},
+	}, {
+		name:     "set integer field with big value",
+		expected: Config{Int: 21474836},
+		envVars: map[string]string{
+			"INT": "21474836", // value bigger than a int16
 		},
 	}, {
 		name:    "set integer field with invalid env var",
 		wantErr: ErrInvalidTypeConversion,
 		envVars: map[string]string{
-			"NUMBER": "abc",
+			"INT": "abc",
 		},
 	}, {
-		name:     "set float field",
-		expected: Config{Float32: 1.23},
+		name:     "set int8 field",
+		expected: Config{Int8: 19},
 		envVars: map[string]string{
-			"FLOAT_NUMBER": "1.23",
+			"INT_8": "19",
+		},
+	}, {
+		name:     "set int8 field with negative value",
+		expected: Config{Int8: -13},
+		envVars: map[string]string{
+			"INT_8": "-13",
+		},
+	}, {
+		name: "set int8 field with value greater than max size",
+		envVars: map[string]string{
+			"INT_8": "130", // max size is 127
+		},
+		wantErr: ErrInvalidTypeConversion,
+	}, {
+		name: "set int8 field with value less than min size",
+		envVars: map[string]string{
+			"INT_8": "-129", // max size is 127
+		},
+		wantErr: ErrInvalidTypeConversion,
+	}, {
+		name:     "set int16 field",
+		expected: Config{Int16: 32767},
+		envVars: map[string]string{
+			"INT_16": "32767",
+		},
+	}, {
+		name:     "set int16 field with negative value",
+		expected: Config{Int16: -32768},
+		envVars: map[string]string{
+			"INT_16": "-32768",
+		},
+	}, {
+		name:     "set int32 field",
+		expected: Config{Int32: 2147483647},
+		envVars: map[string]string{
+			"INT_32": "2147483647",
+		},
+	}, {
+		name:     "set int64 field",
+		expected: Config{Int64: 9223372036854775807},
+		envVars: map[string]string{
+			"INT_64": "9223372036854775807",
 		},
 	},
 	}
@@ -58,7 +155,8 @@ func TestSetFieldTypes(t *testing.T) {
 			var cfg Config
 
 			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
-				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
+				t.Errorf("err different than expected, want=\"%+v\", got=\"%+v\"", tt.wantErr, err)
+				return
 			}
 			if cfg != tt.expected {
 				t.Errorf("Set(&s), want %+v, got %+v", tt.expected, cfg)
