@@ -7,6 +7,31 @@
 
 One more package to support env tags to load environment variables on structs. It is more about studying Go reflection approach than to create something that already exists.
 
+## Usage
+
+Define a struct with the `env` tag on **exported** fields to bind the fields with environment variables
+
+```go
+type Config struct {
+	Foo int `env:"BAR"`
+}
+```
+
+On an environment with the corresponding variables set, bind the struct to these variables using the method `Set()`
+
+```shell
+  export BAR="13" 
+```
+
+```go
+var config Config
+if err := envtags.Set(&config); err != nil {
+	log.Fatal(err)
+}
+```
+
+## Refs
+
 Better test output with:
 ```shell
 go install github.com/rakyll/gotest
