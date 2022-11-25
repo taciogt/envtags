@@ -18,7 +18,8 @@ func TestSetFieldTypes(t *testing.T) {
 		Int32 int32 `env:"INT_32"`
 		Int64 int64 `env:"INT_64"`
 
-		UInt uint `env:"UINT"`
+		UInt   uint   `env:"UINT"`
+		UInt32 uint32 `env:"UINT_32"`
 	}
 
 	tests := []struct {
@@ -132,6 +133,18 @@ func TestSetFieldTypes(t *testing.T) {
 				"UINT": "-1",
 			},
 			wantErr: ErrInvalidTypeConversion,
+		}, {
+			name:     "set unsigned uint32 field",
+			expected: config{UInt32: 123},
+			envVars: map[string]string{
+				"UINT_32": "123",
+			},
+		}, {
+			name: "try to set unsigned uint32 field with value bigger than max size",
+			envVars: map[string]string{
+				"UINT_32": "4294967296",
+			},
+			wantErr: ErrInvalidTypeConversion,
 		},
 	}
 
@@ -152,7 +165,7 @@ func TestSetFieldTypes(t *testing.T) {
 				return
 			}
 			if cfg != tt.expected {
-				t.Errorf("Set(&s), want %+v, got %+v", tt.expected, cfg)
+				t.Errorf("Set(&s), \nwant %+v,\ngot  %+v", tt.expected, cfg)
 			}
 		})
 	}
