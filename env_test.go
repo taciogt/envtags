@@ -19,10 +19,10 @@ func TestSetFieldTypes(t *testing.T) {
 		Int64 int64 `env:"INT_64"`
 
 		UInt   uint   `env:"UINT"`
-		UInt8  uint32 `env:"UINT_8"`
-		UInt16 uint32 `env:"UINT_16"`
+		UInt8  uint8  `env:"UINT_8"`
+		UInt16 uint16 `env:"UINT_16"`
 		UInt32 uint32 `env:"UINT_32"`
-		UInt64 uint32 `env:"UINT_64"`
+		UInt64 uint64 `env:"UINT_64"`
 	}
 
 	tests := []struct {

@@ -56,7 +56,10 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 	reflect.Int32:  getIntParser(math.MinInt32, math.MaxInt32),
 	reflect.Int64:  getIntParser(math.MinInt64, math.MaxInt64),
 	reflect.Uint:   getUIntParser(64),
+	reflect.Uint8:  getUIntParser(8),
+	reflect.Uint16: getUIntParser(16),
 	reflect.Uint32: getUIntParser(32),
+	reflect.Uint64: getUIntParser(32),
 	reflect.Float32: func(envVarValue string, v reflect.Value) error {
 		floatValue, err := strconv.ParseFloat(envVarValue, 32)
 		if err != nil {
