@@ -33,6 +33,7 @@ if err := envtags.Set(&config); err != nil {
 ```
 
 If the environment variable value can not be parsed to the field type, an `envtags.ErrInvalidTypeConversion` error is returned.  
+
 If the field type is not supported, an `envtags.ErrParserNotAvailable` is returned.
 
 ## Supported field types:
