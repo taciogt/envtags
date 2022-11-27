@@ -10,6 +10,8 @@ import (
 
 func TestSetFieldTypes(t *testing.T) {
 	type config struct {
+		Bool bool `env:"BOOL"`
+
 		Word      string    `env:"FOO"`
 		Float32   float32   `env:"FLOAT_NUMBER"`
 		Complex64 complex64 `env:"COMPLEX_64"`
@@ -33,6 +35,36 @@ func TestSetFieldTypes(t *testing.T) {
 		envVars  map[string]string
 		wantErr  error
 	}{{
+		name: "set bool field with true as text",
+		envVars: map[string]string{
+			"BOOL": "true",
+		},
+		expected: config{Bool: true},
+	}, {
+		name: "set bool field with false as text",
+		envVars: map[string]string{
+			"BOOL": "false",
+		},
+		expected: config{Bool: false},
+	}, {
+		name: "set bool field with empty string",
+		envVars: map[string]string{
+			"BOOL": "",
+		},
+		expected: config{Bool: false},
+	}, {
+		name: "set bool field with 1",
+		envVars: map[string]string{
+			"BOOL": "1",
+		},
+		expected: config{Bool: true},
+	}, {
+		name: "set bool field with 0",
+		envVars: map[string]string{
+			"BOOL": "0",
+		},
+		expected: config{Bool: false},
+	}, {
 		name:     "set string field",
 		expected: config{Word: "bar"},
 		envVars: map[string]string{

@@ -46,6 +46,19 @@ func getUIntParser(bitSize int) func(envVarValue string, v reflect.Value) error 
 }
 
 var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value) error{
+
+	reflect.Bool: func(envVarValue string, v reflect.Value) error {
+		if envVarValue == "" {
+			v.SetBool(false)
+			return nil
+		}
+		boolValue, err := strconv.ParseBool(envVarValue)
+		if err != nil {
+			return getError(ErrInvalidTypeConversion, err)
+		}
+		v.SetBool(boolValue)
+		return nil
+	},
 	reflect.String: func(envVarValue string, v reflect.Value) error {
 		v.SetString(envVarValue)
 		return nil
