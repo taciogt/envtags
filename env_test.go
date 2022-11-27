@@ -3,6 +3,7 @@ package envtags
 import (
 	"errors"
 	"os"
+	"strconv"
 	"testing"
 )
 
@@ -190,4 +191,32 @@ func TestSetFieldTypes(t *testing.T) {
 			}
 		})
 	}
+}
+
+func FuzzSetUint(f *testing.F) {
+	type config struct {
+		UInt8 uint8 `env:"UINT_8"`
+	}
+	f.Add("1")
+	f.Add("100")
+	f.Add("19")
+	f.Fuzz(func(t *testing.T, s string) {
+		envVarName := "UINT_8"
+		if err := os.Setenv(envVarName, s); err != nil {
+			t.Skip()
+		}
+		var cfg config
+		if err := Set(&cfg); err != nil && !errors.Is(err, ErrInvalidTypeConversion) {
+			t.Error(err)
+		}
+
+		_ = Set(&cfg)
+		//if cfg.UInt8 != i {
+		//	t.Error()
+		//}
+		if os.Getenv(envVarName) != strconv.Itoa(int(cfg.UInt8)) {
+			t.Errorf("cfg field no set as expected. got=%d, want=%s", cfg.UInt8, s)
+		}
+
+	})
 }
