@@ -25,6 +25,12 @@ jobs:
         run: go version
       - name: Run Tests
         run: make test
+  fuzz-testing:
+    name: Fuzz Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Fuzz Tests
+        run: make fuzz
   coverage-report:
     name: Coverage Report
     runs-on: ubuntu-latest
