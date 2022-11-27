@@ -168,6 +168,12 @@ func TestSetFieldTypes(t *testing.T) {
 			envVars: map[string]string{
 				"UINT_8": "123",
 			},
+		}, {
+			name: "set unsigned uint8 field with negative number",
+			envVars: map[string]string{
+				"UINT_8": "-1",
+			},
+			wantErr: ErrInvalidTypeConversion,
 		},
 	}
 
