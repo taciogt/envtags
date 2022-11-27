@@ -199,17 +199,13 @@ func FuzzSetUint(f *testing.F) {
 		UInt8 uint8 `env:"UINT_8"`
 	}
 	f.Fuzz(func(t *testing.T, s string) {
-		ignoredEntryRegex, err := regexp.Compile("(^0.*$)")
-		//ignoredEntryRegex, err := regexp.Compile("^\\s+$")
+		ignoredEntryRegex, err := regexp.Compile("(^\\s+$)|(^0.*$)")
 		if err != nil {
 			t.Error(err)
 		}
 		if ignoredEntryRegex.Match([]byte(s)) {
 			t.Skip()
 		}
-		////if len(s) == 0 {
-		////	t.Skip()
-		////}
 
 		envVarName := "UINT_8"
 		if err := os.Setenv(envVarName, s); err != nil {
