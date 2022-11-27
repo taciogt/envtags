@@ -1,7 +1,7 @@
 # envtags
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6904ddba8e6747559c7b4141b0f91e71)](https://www.codacy.com/gh/taciogt/go-envtags/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=taciogt/go-envtags&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/6904ddba8e6747559c7b4141b0f91e71)](https://www.codacy.com/gh/taciogt/go-envtags/dashboard?utm_source=github.com&utm_medium=referral&utm_content=taciogt/go-envtags&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6904ddba8e6747559c7b4141b0f91e71)](https://www.codacy.com/gh/taciogt/envtags/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=taciogt/envtags&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/6904ddba8e6747559c7b4141b0f91e71)](https://www.codacy.com/gh/taciogt/envtags/dashboard?utm_source=github.com&utm_medium=referral&utm_content=taciogt/envtags&utm_campaign=Badge_Coverage)
 
 🚧 (wip) 
 
