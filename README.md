@@ -40,11 +40,9 @@ Better test output with:
 go install github.com/rakyll/gotest
 ```
 
-
-
 Inspired by 
-* https://github.com/kelseyhightower/envconfig/blob/master/envconfig.go
-* https://github.com/caarlos0/env
+*   https://github.com/kelseyhightower/envconfig/blob/master/envconfig.go
+*   https://github.com/caarlos0/env
 
 References
 *   https://go.dev/ref/spec#Numeric_types
