@@ -7,6 +7,9 @@
 
 envtags is a package to support env tags to load environment variables on structs. It is more about studying Go reflection approach than to create something that already exists, at least for now.
 
+## Requirements
+Go >= 1.18
+
 ## Usage
 
 Define a struct with the `env` tag on **exported** fields to bind the fields with environment variables
@@ -37,8 +40,7 @@ Better test output with:
 go install github.com/rakyll/gotest
 ```
 
-Requirements:
-*   Go >= 1.17
+
 
 Inspired by 
 * https://github.com/kelseyhightower/envconfig/blob/master/envconfig.go

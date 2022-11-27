@@ -3,6 +3,8 @@ package envtags
 import (
 	"errors"
 	"os"
+	"regexp"
+	"strconv"
 	"testing"
 )
 
@@ -166,6 +168,12 @@ func TestSetFieldTypes(t *testing.T) {
 			envVars: map[string]string{
 				"UINT_8": "123",
 			},
+		}, {
+			name: "set unsigned uint8 field with negative number",
+			envVars: map[string]string{
+				"UINT_8": "-1",
+			},
+			wantErr: ErrInvalidTypeConversion,
 		},
 	}
 
@@ -190,4 +198,36 @@ func TestSetFieldTypes(t *testing.T) {
 			}
 		})
 	}
+}
+
+func FuzzSetUint(f *testing.F) {
+	type config struct {
+		UInt8 uint8 `env:"UINT_8"`
+	}
+	f.Fuzz(func(t *testing.T, s string) {
+		ignoredEntryRegex, err := regexp.Compile("(^\\s+$)|(^0.*$)")
+		if err != nil {
+			t.Error(err)
+		}
+		if ignoredEntryRegex.Match([]byte(s)) {
+			t.Skip()
+		}
+
+		envVarName := "UINT_8"
+		if err := os.Setenv(envVarName, s); err != nil {
+			t.Skip()
+		}
+		var cfg config
+		if err := Set(&cfg); err != nil && !errors.Is(err, ErrInvalidTypeConversion) {
+			t.Error(err)
+		} else if errors.Is(err, ErrInvalidTypeConversion) {
+			t.Skip()
+		}
+
+		_ = Set(&cfg)
+		if os.Getenv(envVarName) != strconv.Itoa(int(cfg.UInt8)) {
+			t.Errorf("cfg field no set as expected. got=\"%d\", want=\"%s\"", cfg.UInt8, s)
+		}
+
+	})
 }
