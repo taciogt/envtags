@@ -1,7 +1,7 @@
 name: Publish Release
 on:
   release:
-    - pu
+    types: [published]
 
 jobs:
   run-go-tests:
