@@ -5,6 +5,8 @@
 
 _envtags_ is a package to use struct tags to automatically load environment variables on them. It is more about studying Go reflection approach than to create something better than what already exists.
 
+[Docs](https://pkg.go.dev/github.com/taciogt/envtags)
+
 ## Requirements
 
 Go >= 1.18
