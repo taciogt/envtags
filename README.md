@@ -60,3 +60,4 @@ Inspired by
 
 References
 *   https://go.dev/ref/spec#Numeric_types
+*   [godoc](https://go.dev/blog/godoc) 
