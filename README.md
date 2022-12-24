@@ -60,5 +60,5 @@ Inspired by
 *   https://github.com/caarlos0/env
 
 References
-*   https://go.dev/ref/spec#Numeric_types
-*   [godoc](https://go.dev/blog/godoc) 
+-   [Go numeric types](https://go.dev/ref/spec#Numeric_types)
+-   [godoc](https://go.dev/blog/godoc) 
