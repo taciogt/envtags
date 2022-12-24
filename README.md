@@ -1,5 +1,6 @@
 # envtags
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/taciogt/envtags.svg)](https://pkg.go.dev/github.com/taciogt/envtags)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/6904ddba8e6747559c7b4141b0f91e71)](https://www.codacy.com/gh/taciogt/envtags/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=taciogt/envtags&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/6904ddba8e6747559c7b4141b0f91e71)](https://www.codacy.com/gh/taciogt/envtags/dashboard?utm_source=github.com&utm_medium=referral&utm_content=taciogt/envtags&utm_campaign=Badge_Coverage)
 
@@ -57,4 +58,5 @@ Inspired by
 *   https://github.com/caarlos0/env
 
 References
-*   https://go.dev/ref/spec#Numeric_types
+-   [Go numeric types](https://go.dev/ref/spec#Numeric_types)
+-   [godoc](https://go.dev/blog/godoc) 
