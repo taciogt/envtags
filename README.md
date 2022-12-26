@@ -59,4 +59,6 @@ Inspired by
 
 References
 -   [Go numeric types](https://go.dev/ref/spec#Numeric_types)
--   [godoc](https://go.dev/blog/godoc) 
+-   [godoc](https://go.dev/blog/godoc)
+-   [docs tips](https://tip.golang.org/doc/comment)
+-   [docs examples](https://go.dev/blog/examples) 
