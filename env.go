@@ -11,11 +11,12 @@ import (
 
 const tagName = "env"
 
+// Specific errors returned by envtags package.
+//
+// Errors returned by the [Set] method can be tested against these variables using [errors.Is]
 var (
-	// ErrInvalidTypeConversion is an error returned when the environment variable is not properly parsed to the expected field type
-	ErrInvalidTypeConversion = errors.New("invalid type conversion")
-	// ErrParserNotAvailable is returned when the value to be set has no parser for its reflect.Kind
-	ErrParserNotAvailable = errors.New("parser not available")
+	ErrInvalidTypeConversion = errors.New("invalid type conversion") // returned when the environment variable is not properly parsed to the expected field type
+	ErrParserNotAvailable    = errors.New("parser not available")    // the field to be set has no parser for its reflect.Kind
 )
 
 func getIntParser(minSize int, maxSize int) func(envVarValue string, v reflect.Value) error {
@@ -83,6 +84,9 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 	},
 }
 
+/*
+Set receives a struct pointer and sets its fields using the parameters defined on
+*/
 func Set(s interface{}) error {
 	value := reflect.ValueOf(s)
 	elem := value.Elem()
