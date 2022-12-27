@@ -57,6 +57,17 @@ func getFloatParser(bitSize int) func(envVarValue string, v reflect.Value) error
 	}
 }
 
+func getComplexParser(bitSize int) func(envVarValue string, v reflect.Value) error {
+	return func(envVarValue string, v reflect.Value) error {
+		complexValue, err := strconv.ParseComplex(envVarValue, bitSize)
+		if err != nil {
+			return getError(ErrInvalidTypeConversion, err)
+		}
+		v.SetComplex(complexValue)
+		return nil
+	}
+}
+
 var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value) error{
 	reflect.Bool: func(envVarValue string, v reflect.Value) error {
 		if envVarValue == "" {
@@ -74,18 +85,20 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 		v.SetString(envVarValue)
 		return nil
 	},
-	reflect.Int:     getIntParser(math.MinInt, math.MaxInt),
-	reflect.Int8:    getIntParser(math.MinInt8, math.MaxInt8),
-	reflect.Int16:   getIntParser(math.MinInt16, math.MaxInt16),
-	reflect.Int32:   getIntParser(math.MinInt32, math.MaxInt32),
-	reflect.Int64:   getIntParser(math.MinInt64, math.MaxInt64),
-	reflect.Uint:    getUIntParser(64),
-	reflect.Uint8:   getUIntParser(8),
-	reflect.Uint16:  getUIntParser(16),
-	reflect.Uint32:  getUIntParser(32),
-	reflect.Uint64:  getUIntParser(32),
-	reflect.Float32: getFloatParser(32),
-	reflect.Float64: getFloatParser(64),
+	reflect.Int:        getIntParser(math.MinInt, math.MaxInt),
+	reflect.Int8:       getIntParser(math.MinInt8, math.MaxInt8),
+	reflect.Int16:      getIntParser(math.MinInt16, math.MaxInt16),
+	reflect.Int32:      getIntParser(math.MinInt32, math.MaxInt32),
+	reflect.Int64:      getIntParser(math.MinInt64, math.MaxInt64),
+	reflect.Uint:       getUIntParser(64),
+	reflect.Uint8:      getUIntParser(8),
+	reflect.Uint16:     getUIntParser(16),
+	reflect.Uint32:     getUIntParser(32),
+	reflect.Uint64:     getUIntParser(32),
+	reflect.Float32:    getFloatParser(32),
+	reflect.Float64:    getFloatParser(64),
+	reflect.Complex64:  getComplexParser(64),
+	reflect.Complex128: getComplexParser(128),
 }
 
 /*

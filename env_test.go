@@ -13,16 +13,15 @@ func TestSetFieldTypes(t *testing.T) {
 	type config struct {
 		Bool bool `env:"BOOL"`
 
-		Word      string    `env:"FOO"`
-		Complex64 complex64 `env:"COMPLEX_64"`
-		Int       int       `env:"INT"`
+		Word string `env:"FOO"`
 
+		Int   int   `env:"INT"`
 		Int8  int8  `env:"INT_8"`
 		Int16 int16 `env:"INT_16"`
 		Int32 int32 `env:"INT_32"`
 		Int64 int64 `env:"INT_64"`
-		UInt  uint  `env:"UINT"`
 
+		UInt   uint   `env:"UINT"`
 		UInt8  uint8  `env:"UINT_8"`
 		UInt16 uint16 `env:"UINT_16"`
 		UInt32 uint32 `env:"UINT_32"`
@@ -30,6 +29,9 @@ func TestSetFieldTypes(t *testing.T) {
 
 		Float32 float32 `env:"FLOAT_32"`
 		Float64 float64 `env:"FLOAT_64"`
+
+		Complex64  complex64  `env:"COMPLEX_64"`
+		Complex128 complex128 `env:"COMPLEX_128"`
 	}
 
 	tests := []struct {
@@ -73,14 +75,7 @@ func TestSetFieldTypes(t *testing.T) {
 		envVars: map[string]string{
 			"FOO": "bar",
 		},
-	}, {
-		name: "set complex64 field",
-		envVars: map[string]string{
-			"COMPLEX_64": "-",
-		},
-		wantErr: ErrParserNotAvailable,
-	},
-		// int type fields
+	}, // int type fields
 		{
 			name:     "set integer field",
 			expected: config{Int: 123},
@@ -231,6 +226,21 @@ func TestSetFieldTypes(t *testing.T) {
 				"FLOAT_64": "123.456",
 			},
 		},
+		// complex types
+		{
+			name:     "set complex64 field",
+			expected: config{Complex64: 123.456 - 789.012i},
+			envVars: map[string]string{
+				"COMPLEX_64": "123.456-789.012i",
+			},
+		},
+		{
+			name:     "set complex128 field",
+			expected: config{Complex128: 123.45678901234567890 + 1i},
+			envVars: map[string]string{
+				"COMPLEX_128": "123.456789012345678901234567890+1i",
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -245,7 +255,7 @@ func TestSetFieldTypes(t *testing.T) {
 
 			var cfg config
 
-			if err := Set(&cfg); err != tt.wantErr && !errors.Is(err, tt.wantErr) {
+			if err := Set(&cfg); !errors.Is(err, tt.wantErr) {
 				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
 				return
 			}
