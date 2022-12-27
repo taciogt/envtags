@@ -2,6 +2,7 @@ package envtags
 
 import (
 	"errors"
+	"math"
 	"os"
 	"regexp"
 	"strconv"
@@ -71,13 +72,7 @@ func TestSetFieldTypes(t *testing.T) {
 			"FOO": "bar",
 		},
 	}, {
-		name:     "set float field",
-		expected: config{Float32: 1.23},
-		envVars: map[string]string{
-			"FLOAT_NUMBER": "1.23",
-		},
-	}, {
-		name: "set float field",
+		name: "set complex64 field",
 		envVars: map[string]string{
 			"COMPLEX_64": "-",
 		},
@@ -204,6 +199,27 @@ func TestSetFieldTypes(t *testing.T) {
 			name: "set unsigned uint8 field with negative number",
 			envVars: map[string]string{
 				"UINT_8": "-1",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		},
+		// float types
+		{
+			name:     "set float32 field with valid value",
+			expected: config{Float32: 1.23},
+			envVars: map[string]string{
+				"FLOAT_NUMBER": "1.23",
+			},
+		}, {
+			name:     "set float32 field with Inf",
+			expected: config{Float32: float32(math.Inf(+1))},
+			envVars: map[string]string{
+				"FLOAT_NUMBER": "+inf",
+			},
+		}, {
+			name:     "set float32 field with invalid value on envvar",
+			expected: config{Float32: 0},
+			envVars: map[string]string{
+				"FLOAT_NUMBER": "invalid.value",
 			},
 			wantErr: ErrInvalidTypeConversion,
 		},
