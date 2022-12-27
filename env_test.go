@@ -14,20 +14,22 @@ func TestSetFieldTypes(t *testing.T) {
 		Bool bool `env:"BOOL"`
 
 		Word      string    `env:"FOO"`
-		Float32   float32   `env:"FLOAT_NUMBER"`
 		Complex64 complex64 `env:"COMPLEX_64"`
+		Int       int       `env:"INT"`
 
-		Int   int   `env:"INT"`
 		Int8  int8  `env:"INT_8"`
 		Int16 int16 `env:"INT_16"`
 		Int32 int32 `env:"INT_32"`
 		Int64 int64 `env:"INT_64"`
+		UInt  uint  `env:"UINT"`
 
-		UInt   uint   `env:"UINT"`
 		UInt8  uint8  `env:"UINT_8"`
 		UInt16 uint16 `env:"UINT_16"`
 		UInt32 uint32 `env:"UINT_32"`
 		UInt64 uint64 `env:"UINT_64"`
+
+		Float32 float32 `env:"FLOAT_32"`
+		Float64 float64 `env:"FLOAT_64"`
 	}
 
 	tests := []struct {
@@ -207,21 +209,27 @@ func TestSetFieldTypes(t *testing.T) {
 			name:     "set float32 field with valid value",
 			expected: config{Float32: 1.23},
 			envVars: map[string]string{
-				"FLOAT_NUMBER": "1.23",
+				"FLOAT_32": "1.23",
 			},
 		}, {
 			name:     "set float32 field with Inf",
 			expected: config{Float32: float32(math.Inf(+1))},
 			envVars: map[string]string{
-				"FLOAT_NUMBER": "+inf",
+				"FLOAT_32": "+inf",
 			},
 		}, {
 			name:     "set float32 field with invalid value on envvar",
 			expected: config{Float32: 0},
 			envVars: map[string]string{
-				"FLOAT_NUMBER": "invalid.value",
+				"FLOAT_32": "invalid.value",
 			},
 			wantErr: ErrInvalidTypeConversion,
+		}, {
+			name:     "set float64 field",
+			expected: config{Float64: 123.456},
+			envVars: map[string]string{
+				"FLOAT_64": "123.456",
+			},
 		},
 	}
 
