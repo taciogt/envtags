@@ -239,6 +239,12 @@ func TestSetFieldTypes(t *testing.T) {
 				"COMPLEX_64": "123.456-789.012i",
 			},
 		}, {
+			name: "set complex64 field with invalid value",
+			envVars: map[string]string{
+				"COMPLEX_64": "invalid value",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		}, {
 			name:     "set complex128 field",
 			expected: config{Complex128: 123.45678901234567890 + 1i},
 			envVars: map[string]string{
