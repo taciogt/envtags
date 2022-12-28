@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestSetFieldTypes(t *testing.T) {
+func TestSetPrimitiveFieldTypes(t *testing.T) {
 	type config struct {
 		Bool bool `env:"BOOL"`
 
@@ -272,6 +272,60 @@ func TestSetFieldTypes(t *testing.T) {
 				"BYTE": "256",
 			},
 			wantErr: ErrInvalidTypeConversion,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.envVars {
+				if err := os.Setenv(k, v); err != nil {
+					t.Error(err)
+					return
+				}
+			}
+			defer os.Clearenv()
+
+			var cfg config
+
+			if err := Set(&cfg); !errors.Is(err, tt.wantErr) {
+				t.Errorf("err different than expected, want '%+v', got '%+v'", tt.wantErr, err)
+				return
+			}
+			if cfg != tt.expected {
+				t.Errorf("Set(&s), \nwant %+v,\ngot  %+v", tt.expected, cfg)
+			}
+		})
+	}
+}
+
+func TestSetCustomTypes(t *testing.T) {
+	type StringType string
+	type FooType struct{}
+
+	type config struct {
+		StringField StringType `env:"STRING"`
+		FooField    FooType    `env:"FOO"`
+	}
+
+	tests := []struct {
+		name     string
+		expected config
+		envVars  map[string]string
+		wantErr  error
+	}{
+		// bool type fields
+		{
+			name: "set custom string type without parser",
+			envVars: map[string]string{
+				"STRING": "any value",
+			},
+			expected: config{StringField: "any value"},
+		}, {
+			name: "set custom struct type without parser",
+			envVars: map[string]string{
+				"FOO": "any value",
+			},
+			wantErr: ErrParserNotAvailable,
 		},
 	}
 
