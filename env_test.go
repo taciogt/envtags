@@ -32,6 +32,8 @@ func TestSetFieldTypes(t *testing.T) {
 
 		Complex64  complex64  `env:"COMPLEX_64"`
 		Complex128 complex128 `env:"COMPLEX_128"`
+
+		Byte byte `env:"BYTE"`
 	}
 
 	tests := []struct {
@@ -39,43 +41,46 @@ func TestSetFieldTypes(t *testing.T) {
 		expected config
 		envVars  map[string]string
 		wantErr  error
-	}{{
-		name: "set bool field with true as text",
-		envVars: map[string]string{
-			"BOOL": "true",
+	}{
+		// bool type fields
+		{
+			name: "set bool field with true as text",
+			envVars: map[string]string{
+				"BOOL": "true",
+			},
+			expected: config{Bool: true},
+		}, {
+			name: "set bool field with false as text",
+			envVars: map[string]string{
+				"BOOL": "false",
+			},
+			expected: config{Bool: false},
+		}, {
+			name: "set bool field with empty string",
+			envVars: map[string]string{
+				"BOOL": "",
+			},
+			expected: config{Bool: false},
+		}, {
+			name: "set bool field with 1",
+			envVars: map[string]string{
+				"BOOL": "1",
+			},
+			expected: config{Bool: true},
+		}, {
+			name: "set bool field with 0",
+			envVars: map[string]string{
+				"BOOL": "0",
+			},
+			expected: config{Bool: false},
+		}, {
+			name:     "set string field",
+			expected: config{Word: "bar"},
+			envVars: map[string]string{
+				"FOO": "bar",
+			},
 		},
-		expected: config{Bool: true},
-	}, {
-		name: "set bool field with false as text",
-		envVars: map[string]string{
-			"BOOL": "false",
-		},
-		expected: config{Bool: false},
-	}, {
-		name: "set bool field with empty string",
-		envVars: map[string]string{
-			"BOOL": "",
-		},
-		expected: config{Bool: false},
-	}, {
-		name: "set bool field with 1",
-		envVars: map[string]string{
-			"BOOL": "1",
-		},
-		expected: config{Bool: true},
-	}, {
-		name: "set bool field with 0",
-		envVars: map[string]string{
-			"BOOL": "0",
-		},
-		expected: config{Bool: false},
-	}, {
-		name:     "set string field",
-		expected: config{Word: "bar"},
-		envVars: map[string]string{
-			"FOO": "bar",
-		},
-	}, // int type fields
+		// int type fields
 		{
 			name:     "set integer field",
 			expected: config{Int: 123},
@@ -233,13 +238,26 @@ func TestSetFieldTypes(t *testing.T) {
 			envVars: map[string]string{
 				"COMPLEX_64": "123.456-789.012i",
 			},
-		},
-		{
+		}, {
 			name:     "set complex128 field",
 			expected: config{Complex128: 123.45678901234567890 + 1i},
 			envVars: map[string]string{
 				"COMPLEX_128": "123.456789012345678901234567890+1i",
 			},
+		},
+		// byte types
+		{
+			name:     "set byte field",
+			expected: config{Byte: 255},
+			envVars: map[string]string{
+				"BYTE": "255",
+			},
+		}, {
+			name: "set byte field with value larger than maximum value",
+			envVars: map[string]string{
+				"BYTE": "256",
+			},
+			wantErr: ErrInvalidTypeConversion,
 		},
 	}
 
@@ -256,7 +274,7 @@ func TestSetFieldTypes(t *testing.T) {
 			var cfg config
 
 			if err := Set(&cfg); !errors.Is(err, tt.wantErr) {
-				t.Errorf("err different than expected, want %+v, got %+v", tt.wantErr, err)
+				t.Errorf("err different than expected, want '%+v', got '%+v'", tt.wantErr, err)
 				return
 			}
 			if cfg != tt.expected {
