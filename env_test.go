@@ -74,6 +74,14 @@ func TestSetFieldTypes(t *testing.T) {
 			},
 			expected: config{Bool: false},
 		}, {
+			name: "set bool field with invalid value",
+			envVars: map[string]string{
+				"BOOL": "invalid-string",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		},
+		// string type field
+		{
 			name:     "set string field",
 			expected: config{Word: "bar"},
 			envVars: map[string]string{
