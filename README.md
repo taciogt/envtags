@@ -40,12 +40,12 @@ If the field type is not supported, an `envtags.ErrParserNotAvailable` is return
 ## Supported field types:
 
 - Primitive types
-    - `bool`
-    - `string`
-    - `int`, `int64`, `int32`, `int16`, `int8`
-    - `uint`, `uint64`, `uint32`, `uint16`, `uint8`
-    - `float32`, `float64`
-    - `complex64`, `complex128`
+  - `bool`
+  - `string`
+  - `int`, `int64`, `int32`, `int16`, `int8`
+  - `uint`, `uint64`, `uint32`, `uint16`, `uint8`
+  - `float32`, `float64`
+  - `complex64`, `complex128`
 
 ## Refs
 
