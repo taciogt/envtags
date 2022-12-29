@@ -23,5 +23,5 @@ $(COVERAGE_OUT): *.go
 coverage-report: $(COVERAGE_OUT)
 	$(GOTOOL) cover -html=coverage.out
 
-doc:
+doc: setup
 	godoc -http=:6060
