@@ -106,6 +106,15 @@ func Set(s interface{}) error {
 	for i := 0; i < elem.NumField(); i++ {
 		f := elem.Field(i)
 		fType := typeSpec.Field(i)
+
+		k := fType.Type.Kind()
+		if k == reflect.Struct {
+			if err := Set(f.Addr().Interface()); err != nil {
+				return err
+			}
+			continue
+		}
+
 		envVarName := fType.Tag.Get(tagName)
 
 		if envVarValue, ok := os.LookupEnv(envVarName); ok {

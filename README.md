@@ -37,7 +37,7 @@ If the environment variable value can not be parsed to the field type, an `envta
 
 If the field type is not supported, an `envtags.ErrParserNotAvailable` is returned.
 
-## Supported field types:
+## Supported types
 
 - Primitive types
   - `bool`
