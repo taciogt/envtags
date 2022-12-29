@@ -46,6 +46,7 @@ If the field type is not supported, an `envtags.ErrParserNotAvailable` is return
   - `uint`, `uint64`, `uint32`, `uint16`, `uint8`
   - `float32`, `float64`
   - `complex64`, `complex128`
+  - `byte`
 
 ## Refs
 
