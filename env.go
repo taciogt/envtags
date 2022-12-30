@@ -99,6 +99,10 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 Set receives a struct pointer and sets its fields using the value from environment variables defined in the struct tag "env".
 */
 func Set(s interface{}) error {
+	return set(s, tagDetails{})
+}
+
+func set(s interface{}, options tagDetails) error {
 	value := reflect.ValueOf(s)
 	elem := value.Elem()
 	typeSpec := elem.Type()
@@ -106,18 +110,19 @@ func Set(s interface{}) error {
 	for i := 0; i < elem.NumField(); i++ {
 		f := elem.Field(i)
 		fType := typeSpec.Field(i)
+		tagValue := fType.Tag.Get(tagName)
+
+		details := parseTagValue(tagValue).Update(options)
 
 		k := fType.Type.Kind()
 		if k == reflect.Struct {
-			if err := Set(f.Addr().Interface()); err != nil {
+			if err := set(f.Addr().Interface(), details); err != nil {
 				return err
 			}
 			continue
 		}
 
-		envVarName := fType.Tag.Get(tagName)
-
-		if envVarValue, ok := os.LookupEnv(envVarName); ok {
+		if envVarValue, ok := os.LookupEnv(details.GetEnvVar()); ok {
 			parser, parserExists := parserByKindMap[fType.Type.Kind()]
 			if !parserExists {
 				return getError(ErrParserNotAvailable, fmt.Errorf("parser for %s not found", fType.Type.Kind()))

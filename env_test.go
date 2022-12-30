@@ -368,11 +368,13 @@ func TestStructTypes(t *testing.T) {
 		String string `env:"STRING"`
 	}
 	type SecondStruct struct {
-		InnerStruct SimpleStruct `env:"STRING"`
+		InnerStruct SimpleStruct `env:",prefix:INNER_"`
 	}
 
 	type config struct {
 		SimpleStructValue SimpleStruct
+		WithPrefix        SimpleStruct `env:",prefix:PREFIX_"`
+		DeepStruct        SecondStruct `env:",prefix:DEEP_"`
 		//SimpleStructPointer *SimpleStruct
 	}
 
@@ -394,17 +396,35 @@ func TestStructTypes(t *testing.T) {
 					String: "a word"},
 			},
 		},
-		//{
-		//	name: "set inner struct fields",
-		//	envVars: map[string]string{
-		//		"INT":    "123",
-		//		"STRING": "a word",
-		//	},
-		//	expected: config{
-		//		SimpleStructValue:   SimpleStruct{Int: 123},
-		//		SimpleStructPointer: SecondStruct{String: "a word"},
-		//	},
-		//},
+		{
+			name: "set struct fields with prefix option",
+			envVars: map[string]string{
+				"INT":           "123",
+				"STRING":        "a word",
+				"PREFIX_INT":    "456",
+				"PREFIX_STRING": "another sentence",
+			},
+			expected: config{
+				SimpleStructValue: SimpleStruct{
+					Int:    123,
+					String: "a word"},
+				WithPrefix: SimpleStruct{Int: 456,
+					String: "another sentence"},
+			},
+		},
+		{
+			name: "set deep struct fields",
+			envVars: map[string]string{
+				"DEEP_INNER_INT":    "1234",
+				"DEEP_INNER_STRING": "deep word",
+			},
+			expected: config{
+				DeepStruct: SecondStruct{
+					SimpleStruct{
+						Int:    1234,
+						String: "deep word",
+					}}},
+		},
 	}
 
 	for _, tt := range tests {
