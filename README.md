@@ -14,12 +14,6 @@ Go >= 1.18
 
 Define a struct with the `env` tag on **exported** fields to bind the fields with environment variables
 
-```go
-type Config struct {
-	Foo int `env:"BAR"`
-}
-```
-
 On an environment with the corresponding variables set, bind the struct to these variables using the method `envtags.Set()`
 
 ```shell
@@ -27,9 +21,19 @@ On an environment with the corresponding variables set, bind the struct to these
 ```
 
 ```go
-var config Config
-if err := envtags.Set(&config); err != nil {
-	log.Fatal(err)
+package main
+
+import "github.com/taciogt/envtags"
+
+type Config struct {
+  Foo int `env:"BAR"`
+}
+
+func main() {
+  var config Config
+  if err := envtags.Set(&config); err != nil {
+    log.Fatal(err)
+  }
 }
 ```
 

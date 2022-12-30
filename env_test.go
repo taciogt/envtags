@@ -363,13 +363,17 @@ func TestSetCustomTypes(t *testing.T) {
 }
 
 func TestStructTypes(t *testing.T) {
-	type StructA struct {
-		Int int `env:"INT"`
+	type SimpleStruct struct {
+		Int    int    `env:"INT"`
+		String string `env:"STRING"`
 	}
-	type StructB struct{}
+	type SecondStruct struct {
+		InnerStruct SimpleStruct `env:"STRING"`
+	}
 
 	type config struct {
-		A StructA
+		SimpleStructValue SimpleStruct
+		//SimpleStructPointer *SimpleStruct
 	}
 
 	tests := []struct {
@@ -379,12 +383,28 @@ func TestStructTypes(t *testing.T) {
 		wantErr  error
 	}{
 		{
-			name: "set inner struct field",
+			name: "set struct fields for simple struct",
 			envVars: map[string]string{
-				"INT": "123",
+				"INT":    "123",
+				"STRING": "a word",
 			},
-			expected: config{A: StructA{Int: 123}},
+			expected: config{
+				SimpleStructValue: SimpleStruct{
+					Int:    123,
+					String: "a word"},
+			},
 		},
+		//{
+		//	name: "set inner struct fields",
+		//	envVars: map[string]string{
+		//		"INT":    "123",
+		//		"STRING": "a word",
+		//	},
+		//	expected: config{
+		//		SimpleStructValue:   SimpleStruct{Int: 123},
+		//		SimpleStructPointer: SecondStruct{String: "a word"},
+		//	},
+		//},
 	}
 
 	for _, tt := range tests {
