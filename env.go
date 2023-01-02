@@ -102,7 +102,7 @@ func Set(s interface{}) error {
 	return set(s, tagDetails{})
 }
 
-func set(s interface{}, options tagDetails) error {
+func set(s interface{}, details tagDetails) error {
 	value := reflect.ValueOf(s)
 	elem := value.Elem()
 	typeSpec := elem.Type()
@@ -112,7 +112,7 @@ func set(s interface{}, options tagDetails) error {
 		fType := typeSpec.Field(i)
 		tagValue := fType.Tag.Get(tagName)
 
-		details := parseTagValue(tagValue).Update(options)
+		details := parseTagValue(tagValue).Update(details)
 
 		k := fType.Type.Kind()
 		if k == reflect.Struct {
