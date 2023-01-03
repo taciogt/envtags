@@ -96,7 +96,8 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 }
 
 /*
-Set receives a struct pointer and sets its fields using the value from environment variables defined in the struct tag "env".
+Set receives a struct pointer and sets its fields using the value from
+environment variables defined in the struct tag `env`.
 */
 func Set(s interface{}) error {
 	return set(s, tagDetails{})
