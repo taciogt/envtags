@@ -63,6 +63,47 @@ func TestSetCustomTypes(t *testing.T) {
 	}
 }
 
+func TestInvalidTypes(t *testing.T) {
+	type config struct {
+		Func func() `env:"FUNC"`
+	}
+
+	tests := []struct {
+		name     string
+		expected config
+		envVars  map[string]string
+		wantErr  error
+	}{
+		{
+			name: "set field without available parser",
+			envVars: map[string]string{
+				"FUNC": "any value",
+			},
+			wantErr: ErrParserNotAvailable,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.envVars {
+				if err := os.Setenv(k, v); err != nil {
+					t.Error(err)
+					return
+				}
+			}
+			defer os.Clearenv()
+
+			var cfg config
+
+			if err := Set(&cfg); !errors.Is(err, tt.wantErr) {
+				t.Errorf("err different than expected, want '%+v', got '%+v'", tt.wantErr, err)
+				return
+			}
+
+		})
+	}
+}
+
 func FuzzSetUint(f *testing.F) {
 	type config struct {
 		UInt8 uint8 `env:"UINT_8"`

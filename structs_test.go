@@ -69,6 +69,13 @@ func TestStructTypes(t *testing.T) {
 						String: "deep word",
 					}}},
 		},
+		{
+			name: "set deep struct fields with invalid value",
+			envVars: map[string]string{
+				"DEEP_INNER_INT": "one",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		},
 	}
 
 	for _, tt := range tests {
