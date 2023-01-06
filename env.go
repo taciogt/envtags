@@ -1,7 +1,6 @@
 package envtags
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -9,14 +8,6 @@ import (
 )
 
 const tagName = "env"
-
-// Specific errors returned by envtags package.
-//
-// Errors returned by the [Set] method can be tested against these variables using [errors.Is]
-var (
-	ErrInvalidTypeConversion = errors.New("invalid type conversion") // returned when the environment variable is not properly parsed to the expected field type
-	ErrParserNotAvailable    = errors.New("parser not available")    // the field to be set has no parser for its reflect.Kind
-)
 
 func getIntParser(bitSize int) func(envVarValue string, v reflect.Value) error {
 	return func(envVarValue string, v reflect.Value) error {
@@ -96,9 +87,14 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 }
 
 /*
-Set receives a struct pointer and sets its fields using the value from environment variables defined in the struct tag "env".
+Set receives a struct pointer and sets its fields using the value from
+environment variables defined in the struct tag `env`.
 */
 func Set(s interface{}) error {
+	return set(s, tagDetails{})
+}
+
+func set(s interface{}, details tagDetails) error {
 	value := reflect.ValueOf(s)
 	elem := value.Elem()
 	typeSpec := elem.Type()
@@ -106,9 +102,19 @@ func Set(s interface{}) error {
 	for i := 0; i < elem.NumField(); i++ {
 		f := elem.Field(i)
 		fType := typeSpec.Field(i)
-		envVarName := fType.Tag.Get(tagName)
+		tagValue := fType.Tag.Get(tagName)
 
-		if envVarValue, ok := os.LookupEnv(envVarName); ok {
+		details := parseTagValue(tagValue).Update(details)
+
+		k := fType.Type.Kind()
+		if k == reflect.Struct {
+			if err := set(f.Addr().Interface(), details); err != nil {
+				return err
+			}
+			continue
+		}
+
+		if envVarValue, ok := os.LookupEnv(details.GetEnvVar()); ok {
 			parser, parserExists := parserByKindMap[fType.Type.Kind()]
 			if !parserExists {
 				return getError(ErrParserNotAvailable, fmt.Errorf("parser for %s not found", fType.Type.Kind()))
@@ -120,8 +126,4 @@ func Set(s interface{}) error {
 
 	}
 	return nil
-}
-
-func getError(customErr, baseErr error) error {
-	return fmt.Errorf("%w: %s", customErr, baseErr)
 }
