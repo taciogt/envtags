@@ -19,7 +19,7 @@ Define a struct with the `env` tag on **exported** fields to bind the fields wit
 On an environment with the corresponding variables set, bind the struct to these variables using the method `envtags.Set()`
 
 ```shell
-  export BAR="13" 
+export BAR="13" 
 ```
 
 ```go
