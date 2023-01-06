@@ -19,7 +19,6 @@ func TestStructTypes(t *testing.T) {
 		SimpleStructValue SimpleStruct
 		WithPrefix        SimpleStruct `env:",prefix:PREFIX_"`
 		DeepStruct        SecondStruct `env:",prefix:DEEP_"`
-		//SimpleStructPointer *SimpleStruct
 	}
 
 	tests := []struct {
