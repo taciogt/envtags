@@ -43,7 +43,7 @@ If the field type is not supported, an `envtags.ErrParserNotAvailable` is return
 
 ## Supported types
 
-- Primitive types
+- Primitives
   - `bool`
   - `string`
   - `int`, `int64`, `int32`, `int16`, `int8`
@@ -51,6 +51,8 @@ If the field type is not supported, an `envtags.ErrParserNotAvailable` is return
   - `float32`, `float64`
   - `complex64`, `complex128`
   - `byte`
+- Non primitives
+  - `structs` 
 
 ## Refs
 
