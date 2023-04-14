@@ -279,6 +279,18 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 				"RUNE": "a",
 			},
 			expected: config{Rune: 'a'},
+		}, {
+			name: "set rune field with word instead of rune",
+			envVars: map[string]string{
+				"RUNE": "ab",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		}, {
+			name: "set rune field with empty env var value",
+			envVars: map[string]string{
+				"RUNE": "",
+			},
+			wantErr: ErrInvalidTypeConversion,
 		},
 	}
 
@@ -296,7 +308,9 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 
 			if err := Set(&cfg); !errors.Is(err, tt.wantErr) {
 				t.Errorf("err different than expected, want '%+v', got '%+v'", tt.wantErr, err)
-				return
+				if err != nil {
+					return
+				}
 			}
 			if cfg != tt.expected {
 				t.Errorf("Set(&s), \nwant %+v,\ngot  %+v", tt.expected, cfg)

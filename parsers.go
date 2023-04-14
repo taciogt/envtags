@@ -1,6 +1,7 @@
 package envtags
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -51,7 +52,9 @@ func getComplexParser(bitSize int) func(envVarValue string, v reflect.Value) err
 }
 
 func parseRune(envVarValue string, v reflect.Value) error {
-	// TODO: return an error if envVarValue length is different then 1
+	if len(envVarValue) != 1 {
+		return getError(ErrInvalidTypeConversion, errors.New("environment variable length different than rune size"))
+	}
 	for _, letter := range envVarValue {
 		v.SetInt(int64(letter))
 	}

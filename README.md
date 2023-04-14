@@ -51,7 +51,7 @@ If the field type is not supported, an `envtags.ErrParserNotAvailable` is return
 
 - Primitives
   - `bool`
-  - `string`
+  - `string`, `rune`
   - `int`, `int64`, `int32`, `int16`, `int8`
   - `uint`, `uint64`, `uint32`, `uint16`, `uint8`
   - `float32`, `float64`
