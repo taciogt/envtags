@@ -8,9 +8,12 @@ func parseTagValue(tagValue string) tagDetails {
 
 	for _, opt := range options[1:] {
 		optSlice := strings.Split(opt, ":")
-		switch k, v := optSlice[0], optSlice[1]; k {
+		switch k := optSlice[0]; k {
 		case "prefix":
+			v := optSlice[1]
 			result.Prefix = v
+		case "rune":
+			result.IsRune = true
 		}
 
 	}
@@ -21,6 +24,7 @@ func parseTagValue(tagValue string) tagDetails {
 type tagDetails struct {
 	Prefix     string
 	EnvVarName string
+	IsRune     bool
 }
 
 func (td tagDetails) Update(oldDetails tagDetails) tagDetails {

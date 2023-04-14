@@ -32,7 +32,7 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 		Complex128 complex128 `env:"COMPLEX_128"`
 
 		Byte byte `env:"BYTE"`
-		Rune rune `env:"RUNE"`
+		Rune rune `env:"RUNE,rune"`
 	}
 
 	tests := []struct {
@@ -273,13 +273,25 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 			wantErr: ErrInvalidTypeConversion,
 		},
 		// rune type fields
-		//{
-		//	name: "set rune field",
-		//	envVars: map[string]string{
-		//		"RUNE": "a",
-		//	},
-		//	expected: config{Rune: 'a'},
-		//},
+		{
+			name: "set rune field",
+			envVars: map[string]string{
+				"RUNE": "a",
+			},
+			expected: config{Rune: 'a'},
+		}, {
+			name: "set rune field with word instead of rune",
+			envVars: map[string]string{
+				"RUNE": "ab",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		}, {
+			name: "set rune field with empty env var value",
+			envVars: map[string]string{
+				"RUNE": "",
+			},
+			wantErr: ErrInvalidTypeConversion,
+		},
 	}
 
 	for _, tt := range tests {
@@ -296,7 +308,9 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 
 			if err := Set(&cfg); !errors.Is(err, tt.wantErr) {
 				t.Errorf("err different than expected, want '%+v', got '%+v'", tt.wantErr, err)
-				return
+				if err != nil {
+					return
+				}
 			}
 			if cfg != tt.expected {
 				t.Errorf("Set(&s), \nwant %+v,\ngot  %+v", tt.expected, cfg)
