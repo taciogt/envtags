@@ -1,6 +1,7 @@
 package envtags
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -49,7 +50,17 @@ func getComplexParser(bitSize int) func(envVarValue string, v reflect.Value) err
 	}
 }
 
-var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value) error{
+func parseRune(envVarValue string, v reflect.Value) error {
+	// TODO: return an error if envVarValue length is different then 1
+	for _, letter := range envVarValue {
+		v.SetInt(int64(letter))
+	}
+	return nil
+}
+
+type parserFunc func(string, reflect.Value) error
+
+var parserByKindMap = map[reflect.Kind]parserFunc{
 	reflect.Bool: func(envVarValue string, v reflect.Value) error {
 		if envVarValue == "" {
 			v.SetBool(false)
@@ -80,4 +91,16 @@ var parserByKindMap = map[reflect.Kind]func(envVarValue string, v reflect.Value)
 	reflect.Float64:    getFloatParser(64),
 	reflect.Complex64:  getComplexParser(64),
 	reflect.Complex128: getComplexParser(128),
+}
+
+func getParser(k reflect.Kind, d tagDetails) (parserFunc, error) {
+	if k == reflect.Int32 && d.IsRune {
+		return parseRune, nil
+	}
+
+	if parser, parserExists := parserByKindMap[k]; parserExists {
+		return parser, nil
+	}
+	return nil, getError(ErrParserNotAvailable, fmt.Errorf("parser for %s not found", k))
+
 }
