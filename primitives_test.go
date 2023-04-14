@@ -32,7 +32,7 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 		Complex128 complex128 `env:"COMPLEX_128"`
 
 		Byte byte `env:"BYTE"`
-		Rune rune `env:"RUNE"`
+		Rune rune `env:"RUNE,rune"`
 	}
 
 	tests := []struct {
@@ -273,13 +273,13 @@ func TestSetPrimitiveFieldTypes(t *testing.T) {
 			wantErr: ErrInvalidTypeConversion,
 		},
 		// rune type fields
-		//{
-		//	name: "set rune field",
-		//	envVars: map[string]string{
-		//		"RUNE": "a",
-		//	},
-		//	expected: config{Rune: 'a'},
-		//},
+		{
+			name: "set rune field",
+			envVars: map[string]string{
+				"RUNE": "a",
+			},
+			expected: config{Rune: 'a'},
+		},
 	}
 
 	for _, tt := range tests {

@@ -115,6 +115,13 @@ func set(s interface{}, details tagDetails) error {
 		}
 
 		if envVarValue, ok := os.LookupEnv(details.GetEnvVar()); ok {
+			if k == reflect.Int32 && details.IsRune {
+				for _, letter := range envVarValue {
+					f.SetInt(int64(letter))
+				}
+				continue
+			}
+
 			parser, parserExists := parserByKindMap[fType.Type.Kind()]
 			if !parserExists {
 				return getError(ErrParserNotAvailable, fmt.Errorf("parser for %s not found", fType.Type.Kind()))
